@@ -1,0 +1,15 @@
+# Swift
+.build/
+.swiftpm/
+Package.resolved
+*.xcodeproj
+xcuserdata/
+DerivedData/
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+
+# Generated files
+generated-charts.html
