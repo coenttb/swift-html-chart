@@ -28,11 +28,13 @@ public struct ChartScript: HTML {
     
     private func generateScript() -> String {
         let configJS = configuration.toJavaScript()
-        let globalVar = storeGlobally ? "window.chart_\(chartId)" : "chart_\(chartId)"
+        let chartVar = "chart_\(chartId)"
+        let globalVar = storeGlobally ? "window.\(chartVar)" : chartVar
         
         if waitForDOM {
             return """
             (function() {
+                \(storeGlobally ? "" : "let \(chartVar);")
                 function init_\(chartId)() {
                     if (typeof Chart === 'undefined') {
                         setTimeout(init_\(chartId), 100);
@@ -66,7 +68,7 @@ public struct ChartScript: HTML {
             return """
             const ctx_\(chartId) = document.getElementById('\(chartId)');
             if (ctx_\(chartId)) {
-                \(globalVar) = new Chart(ctx_\(chartId).getContext('2d'), \(configJS));
+                \(storeGlobally ? "" : "let ")\(globalVar) = new Chart(ctx_\(chartId).getContext('2d'), \(configJS));
             }
             """
         }
