@@ -9,6 +9,7 @@ public struct Chart: HTML {
     public let height: Length?
     public let containerClass: Class?
     public let responsive: Bool
+    public let storeGlobally: Bool
     
     public init(
         id: String? = nil,
@@ -16,7 +17,8 @@ public struct Chart: HTML {
         width: Length? = nil,
         height: Length? = nil,
         containerClass: Class? = nil,
-        responsive: Bool = true
+        responsive: Bool = true,
+        storeGlobally: Bool = false
     ) {
         self.id = id ?? "chart-\(UUID().uuidString.prefix(8))"
         self.configuration = configuration
@@ -24,6 +26,7 @@ public struct Chart: HTML {
         self.height = height
         self.containerClass = containerClass
         self.responsive = responsive
+        self.storeGlobally = storeGlobally
     }
     
     public var body: some HTML {
@@ -39,7 +42,8 @@ public struct Chart: HTML {
             
             ChartScript(
                 chartId: id,
-                configuration: configuration
+                configuration: configuration,
+                storeGlobally: storeGlobally
             )
         }
         .if(let: containerClass) { div, containerClass in
@@ -61,7 +65,8 @@ public struct LineChart: HTML {
         data: ChartData,
         options: ChartOptions? = nil,
         width: Length? = nil,
-        height: Length? = nil
+        height: Length? = nil,
+        storeGlobally: Bool = false
     ) {
         let config = ChartConfiguration(
             type: .line,
@@ -72,7 +77,8 @@ public struct LineChart: HTML {
             id: id,
             configuration: config,
             width: width,
-            height: height
+            height: height,
+            storeGlobally: storeGlobally
         )
     }
     
