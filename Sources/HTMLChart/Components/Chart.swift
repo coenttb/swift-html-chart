@@ -5,18 +5,20 @@ import HTML
 public struct Chart: HTML {
     public let id: String
     public let configuration: ChartConfiguration
-    public let width: Length?
-    public let height: Length?
+    public let width: CSSTypes.Width?
+    public let height: CSSTypes.Height?
     public let containerClass: Class?
     public let responsive: Bool
+    public let storeGlobally: Bool
     
     public init(
         id: String? = nil,
         configuration: ChartConfiguration,
-        width: Length? = nil,
-        height: Length? = nil,
+        width: CSSTypes.Width? = nil,
+        height: CSSTypes.Height? = nil,
         containerClass: Class? = nil,
-        responsive: Bool = true
+        responsive: Bool = true,
+        storeGlobally: Bool = false
     ) {
         self.id = id ?? "chart-\(UUID().uuidString.prefix(8))"
         self.configuration = configuration
@@ -24,6 +26,7 @@ public struct Chart: HTML {
         self.height = height
         self.containerClass = containerClass
         self.responsive = responsive
+        self.storeGlobally = storeGlobally
     }
     
     public var body: some HTML {
@@ -31,15 +34,16 @@ public struct Chart: HTML {
             canvas {}
                 .id(id)
                 .if(let: width) { canvas, width in
-                    canvas.width(.length(width))
+                    canvas.width(width)
                 }
                 .if(let: height) { canvas, height in
-                    canvas.height(.length(height))
+                    canvas.height(height)
                 }
             
             ChartScript(
                 chartId: id,
-                configuration: configuration
+                configuration: configuration,
+                storeGlobally: storeGlobally
             )
         }
         .if(let: containerClass) { div, containerClass in
@@ -60,8 +64,9 @@ public struct LineChart: HTML {
         id: String? = nil,
         data: ChartData,
         options: ChartOptions? = nil,
-        width: Length? = nil,
-        height: Length? = nil
+        width: CSSTypes.Width? = nil,
+        height: CSSTypes.Height? = nil,
+        storeGlobally: Bool = false
     ) {
         let config = ChartConfiguration(
             type: .line,
@@ -72,7 +77,8 @@ public struct LineChart: HTML {
             id: id,
             configuration: config,
             width: width,
-            height: height
+            height: height,
+            storeGlobally: storeGlobally
         )
     }
     
@@ -88,8 +94,8 @@ public struct BarChart: HTML {
         id: String? = nil,
         data: ChartData,
         options: ChartOptions? = nil,
-        width: Length? = nil,
-        height: Length? = nil,
+        width: CSSTypes.Width? = nil,
+        height: CSSTypes.Height? = nil,
         horizontal: Bool = false
     ) {
         var finalOptions = options ?? ChartOptions()
@@ -128,8 +134,8 @@ public struct PieChart: HTML {
         id: String? = nil,
         data: ChartData,
         options: ChartOptions? = nil,
-        width: Length? = nil,
-        height: Length? = nil
+        width: CSSTypes.Width? = nil,
+        height: CSSTypes.Height? = nil
     ) {
         let config = ChartConfiguration(
             type: .pie,
@@ -156,8 +162,8 @@ public struct DoughnutChart: HTML {
         id: String? = nil,
         data: ChartData,
         options: ChartOptions? = nil,
-        width: Length? = nil,
-        height: Length? = nil
+        width: CSSTypes.Width? = nil,
+        height: CSSTypes.Height? = nil
     ) {
         let config = ChartConfiguration(
             type: .doughnut,
@@ -184,8 +190,8 @@ public struct RadarChart: HTML {
         id: String? = nil,
         data: ChartData,
         options: ChartOptions? = nil,
-        width: Length? = nil,
-        height: Length? = nil
+        width: CSSTypes.Width? = nil,
+        height: CSSTypes.Height? = nil
     ) {
         let config = ChartConfiguration(
             type: .radar,
@@ -212,8 +218,8 @@ public struct PolarAreaChart: HTML {
         id: String? = nil,
         data: ChartData,
         options: ChartOptions? = nil,
-        width: Length? = nil,
-        height: Length? = nil
+        width: CSSTypes.Width? = nil,
+        height: CSSTypes.Height? = nil
     ) {
         let config = ChartConfiguration(
             type: .polarArea,
@@ -241,8 +247,8 @@ public struct BubbleChart: HTML {
         id: String? = nil,
         data: ChartData,
         options: ChartOptions? = nil,
-        width: Length? = nil,
-        height: Length? = nil
+        width: CSSTypes.Width? = nil,
+        height: CSSTypes.Height? = nil
     ) {
         let config = ChartConfiguration(
             type: .bubble,
@@ -269,8 +275,8 @@ public struct ScatterChart: HTML {
         id: String? = nil,
         data: ChartData,
         options: ChartOptions? = nil,
-        width: Length? = nil,
-        height: Length? = nil
+        width: CSSTypes.Width? = nil,
+        height: CSSTypes.Height? = nil
     ) {
         let config = ChartConfiguration(
             type: .scatter,
