@@ -1,15 +1,22 @@
 # swift-html-chart
 
+[![CI](https://github.com/coenttb/swift-html-chart/workflows/CI/badge.svg)](https://github.com/coenttb/swift-html-chart/actions/workflows/ci.yml)
+![Development Status](https://img.shields.io/badge/status-active--development-blue.svg)
+
 A Swift package for type-safe Chart.js integration with [swift-html](https://github.com/coenttb/swift-html), providing a domain model and HTML DSL for creating interactive charts in server-side Swift applications.
+
+## Overview
+
+swift-html-chart provides Swift types that map to Chart.js configuration, enabling compile-time type safety for chart generation. The package integrates with swift-html's DSL to render charts as HTML with embedded JavaScript initialization code.
 
 ## Features
 
-- 🎯 **Type-safe Chart.js API** - Swift types for Chart.js configuration
-- 📊 **8 Chart Types** - Line, Bar, Pie, Doughnut, Radar, Polar Area, Bubble, Scatter
-- 🔧 **HTML DSL Integration** - Seamless integration with swift-html
-- 🎨 **Customizable** - Full access to Chart.js options through Swift types
-- 📱 **Responsive** - Built-in responsive chart support
-- 🚀 **Server-Side Rendering** - Generate charts in server-rendered HTML
+- Type-safe Chart.js API using Swift structs and enums
+- Support for 8 chart types: Line, Bar, Pie, Doughnut, Radar, Polar Area, Bubble, Scatter
+- HTML DSL integration via swift-html
+- Full access to Chart.js options through Swift types
+- Responsive chart support
+- Server-side rendering with automatic JavaScript generation
 
 ## Installation
 
@@ -32,7 +39,7 @@ Add to your target:
 )
 ```
 
-## Usage
+## Quick Start
 
 ### Basic Line Chart
 
@@ -43,9 +50,7 @@ import HTMLChart
 let dataset = LineDataset(
     label: "Monthly Sales",
     data: [10, 20, 15, 25, 30],
-    borderColor: .rgb(75, 192, 192),
-    tension: 0.4,
-    fill: true
+    borderColor: .rgb(75, 192, 192)
 )
 
 let data = ChartData(
@@ -53,203 +58,177 @@ let data = ChartData(
     dataset: dataset
 )
 
-// Create chart configuration
-let config = ChartConfiguration(
-    type: .line,
-    data: data,
-    options: ChartOptions(
-        responsive: true,
-        maintainAspectRatio: false
-    )
+// Create and render chart
+let chart = LineChart(
+    id: "sales-chart",
+    data: data
 )
-
-// Render in HTML
-let html = div {
-    Chart(
-        id: "sales-chart",
-        configuration: config,
-        width: .px(800),
-        height: .px(400)
-    )
-}
 ```
 
-### Using Convenience Components
+### Bar Chart with Options
 
 ```swift
 import HTMLChart
 
-// Line Chart
-LineChart(
-    id: "my-line-chart",
-    data: ChartData(
-        labels: ["Q1", "Q2", "Q3", "Q4"],
-        dataset: LineDataset(
-            label: "Revenue",
-            data: [100, 150, 200, 180]
-        )
-    ),
-    options: ChartOptions(
-        plugins: PluginOptions(
-            title: TitleOptions(
-                display: true,
-                text: .single("Quarterly Revenue")
-            )
-        )
+let data = ChartData(
+    labels: ["Q1", "Q2", "Q3", "Q4"],
+    dataset: BarDataset(
+        label: "Revenue",
+        data: [100, 150, 200, 180],
+        backgroundColor: .rgba(54, 162, 235, 0.5)
     )
 )
 
-// Bar Chart
-BarChart(
-    data: ChartData(
-        labels: ["Product A", "Product B", "Product C"],
-        dataset: BarDataset(
-            label: "Sales",
-            data: [30, 50, 20],
-            backgroundColor: .rgba(54, 162, 235, 0.5)
-        )
-    ),
-    horizontal: true  // Horizontal bar chart
-)
-
-// Pie Chart
-PieChart(
-    data: ChartData(
-        labels: ["Desktop", "Mobile", "Tablet"],
-        dataset: PieDataset(
-            data: [60, 30, 10],
-            backgroundColor: [
-                .rgb(255, 99, 132),
-                .rgb(54, 162, 235),
-                .rgb(255, 205, 86)
-            ]
-        )
-    )
+let chart = BarChart(
+    id: "revenue-chart",
+    data: data,
+    horizontal: true
 )
 ```
 
-### Advanced Configuration
+### Pie Chart
+
+```swift
+import HTMLChart
+
+let data = ChartData(
+    labels: ["Desktop", "Mobile", "Tablet"],
+    dataset: PieDataset(
+        data: [60, 30, 10],
+        backgroundColors: [
+            .rgb(255, 99, 132),
+            .rgb(54, 162, 235),
+            .rgb(255, 205, 86)
+        ]
+    )
+)
+
+let chart = PieChart(
+    id: "platform-chart",
+    data: data
+)
+```
+
+## Usage Examples
+
+### Chart Configuration with Options
 
 ```swift
 let options = ChartOptions(
     responsive: true,
+    maintainAspectRatio: false,
+    animation: AnimationOptions(
+        duration: 1000,
+        easing: .easeOutQuart
+    ),
     plugins: PluginOptions(
         legend: LegendOptions(
             display: true,
-            position: .top,
-            labels: LegendLabelOptions(
-                font: FontOptions(size: 14),
-                padding: 20
-            )
+            position: .top
         ),
         tooltip: TooltipOptions(
             enabled: true,
-            mode: .index,
-            intersect: false
+            mode: .index
         ),
-        title: TitleOptions(
-            display: true,
-            text: .single("Sales Dashboard"),
-            font: FontOptions(
-                size: 20,
-                weight: .bold
-            )
-        )
-    ),
-    scales: ScalesOptions(
-        x: ScaleOptions(
-            display: true,
-            grid: GridOptions(display: false)
-        ),
-        y: ScaleOptions(
-            display: true,
-            beginAtZero: true,
-            ticks: TickOptions(
-                stepSize: 10
-            )
-        )
-    ),
-    animation: AnimationOptions(
-        duration: 1000,
-        easing: .easeInOutQuart
+        title: TitleOptions("Sales Dashboard")
     )
+)
+
+let config = ChartConfiguration(
+    type: .line,
+    data: chartData,
+    options: options
 )
 ```
 
-### Integration with HTML Pages
+### Scale Configuration
 
 ```swift
-import HTML
-import HTMLChart
+let xScale = LinearScale(
+    display: true,
+    position: .bottom,
+    title: ScaleTitle(
+        display: true,
+        text: "X Axis"
+    ),
+    beginAtZero: true
+)
 
-struct DashboardPage: HTML {
-    var body: some HTML {
-        html {
-            head {
-                title { "Analytics Dashboard" }
-                // Include Chart.js library
-                script { "" }
-                    .src("https://cdn.jsdelivr.net/npm/chart.js")
-            }
-            body {
-                h1 { "Sales Analytics" }
-                
-                div {
-                    LineChart(
-                        id: "revenue-chart",
-                        data: revenueData,
-                        options: chartOptions
-                    )
-                }
-                .class("chart-container")
-            }
-        }
-    }
-}
+let yScale = CategoryScale(
+    display: true,
+    position: .left,
+    labels: ["Category 1", "Category 2", "Category 3"]
+)
+
+let scales = ScaleOptions()
+    .adding(xScale, withId: "x")
+    .adding(yScale, withId: "y")
+```
+
+### CDN Loading
+
+```swift
+let loader = ChartCDN(
+    version: "4.4.0",
+    minified: true,
+    includePlugins: [.datalabels, .zoom]
+)
 ```
 
 ## Chart Types
 
-### Line Chart
-Ideal for showing trends over time.
+**Line Chart** - Display data points connected by lines, showing trends over continuous data.
 
-### Bar Chart  
-Perfect for comparing quantities across categories.
+**Bar Chart** - Compare discrete data values using rectangular bars.
 
-### Pie & Doughnut Charts
-Best for showing proportions of a whole.
+**Pie Chart** - Show proportional data as sectors of a circle.
 
-### Radar Chart
-Great for comparing multiple variables.
+**Doughnut Chart** - Similar to pie chart with a hollow center.
 
-### Polar Area Chart
-Similar to pie chart but with equal angles and varying radius.
+**Radar Chart** - Display multivariate data on a two-dimensional chart with multiple axes.
 
-### Bubble Chart
-Display three dimensions of data.
+**Polar Area Chart** - Similar to pie chart but with equal angles and varying radius based on value.
 
-### Scatter Chart
-Show correlation between variables.
+**Bubble Chart** - Display three dimensions of data using position and size.
+
+**Scatter Chart** - Show correlation between two variables using coordinate points.
 
 ## Components
 
-### Core Components
-- `Chart` - Main chart component
-- `ChartConfiguration` - Complete chart configuration
+### Core Types
+
+- `Chart` - Main chart component that renders canvas and initialization script
+- `ChartConfiguration` - Complete chart configuration including type, data, and options
 - `ChartData` - Chart data with labels and datasets
 - `ChartOptions` - Chart behavior and appearance options
+- `ChartColor` - Type-safe color representation (rgb, rgba, hex)
 
 ### Dataset Types
-- `LineDataset` - Line chart dataset
-- `BarDataset` - Bar chart dataset  
-- `PieDataset` - Pie/Doughnut dataset
+
+- `LineDataset` - Line chart dataset with border and fill options
+- `BarDataset` - Bar chart dataset with bar-specific properties
+- `PieDataset` - Pie/Doughnut dataset with sector colors
 - `RadarDataset` - Radar chart dataset
-- `BubbleDataset` - Bubble chart dataset
-- `ScatterDataset` - Scatter chart dataset
+- `BubbleDataset` - Bubble chart dataset with radius values
+- `ScatterDataset` - Scatter chart dataset with point coordinates
 
 ### Convenience Charts
+
 - `LineChart`, `BarChart`, `PieChart`, `DoughnutChart`
 - `RadarChart`, `PolarAreaChart`, `BubbleChart`, `ScatterChart`
+
+### Plugin Configuration
+
+- `LegendOptions` - Legend display and positioning
+- `TooltipOptions` - Tooltip behavior and formatting
+- `TitleOptions` - Chart title configuration
+- `AnimationOptions` - Animation timing and easing
+
+### Scale Types
+
+- `LinearScale` - Numeric axis with linear progression
+- `CategoryScale` - Labeled categories axis
+- `ScaleOptions` - Container for multiple scales
 
 ## Requirements
 
@@ -262,9 +241,9 @@ This package is licensed under the Apache License 2.0. See [LICENSE](LICENSE) fi
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are welcome. Please submit a Pull Request with a clear description of your changes.
 
 ## Related Packages
 
 - [swift-html](https://github.com/coenttb/swift-html) - Type-safe HTML DSL for Swift
-- [coenttb-web](https://github.com/coenttb/coenttb-web) - Full-stack Swift web framework
+- [coenttb-web](https://github.com/coenttb/coenttb-web) - Web framework built on Vapor
