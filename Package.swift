@@ -31,7 +31,7 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(url: "https://github.com/coenttb/swift-html", from: "0.0.1")
+        .package(url: "https://github.com/coenttb/swift-html", from: "0.10.0")
     ],
     targets: [
         .target(
