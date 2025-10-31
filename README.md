@@ -245,5 +245,6 @@ Contributions are welcome. Please submit a Pull Request with a clear description
 
 ## Related Packages
 
-- [swift-html](https://github.com/coenttb/swift-html) - The Swift library for domain-accurate and type-safe HTML & CSS.
-- [coenttb-web](https://github.com/coenttb/coenttb-web) - A Swift package with tools for web development building on swift-web.
+### Dependencies
+
+- [swift-html](https://github.com/coenttb/swift-html): The Swift library for domain-accurate and type-safe HTML & CSS.
